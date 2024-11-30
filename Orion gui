@@ -98,11 +98,16 @@ task.spawn(function()
 end)
 
 local function VUI()
-    -- Đảm bảo MainWindow tồn tại
     if MainWindow then
-        MainWindow.Visible = true  -- Hiển thị giao diện MainWindow
+        if UIHidden then
+            MainWindow.Visible = true  -- Hiển thị giao diện nếu đang ẩn
+            UIHidden = false           -- Cập nhật trạng thái UI
+        else
+            MainWindow.Visible = false -- Ẩn giao diện nếu đang hiển thị
+            UIHidden = true            -- Cập nhật trạng thái UI
+        end
     else
-        warn("MainWindow not found!")  -- Cảnh báo nếu MainWindow chưa tồn tại
+        warn("MainWindow không được tìm thấy!") -- Cảnh báo nếu MainWindow chưa tồn tại
     end
 end
 

@@ -1,0 +1,59 @@
+-- animation speed 
+wait = task.wait
+local a = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:wait()
+
+while wait() do
+    local b = a:FindFirstChildOfClass("Humanoid") or a:FindFirstChildOfClass("AnimationController")
+    if not b or not a then continue end
+    for c, d in next, b:GetPlayingAnimationTracks() do
+        d:AdjustSpeed(1) -- Enter the Speed value
+    end
+end
+
+
+-- [[
+Script Fling touch 
+Erm... Not made by kelol123
+]]
+
+local RunService = game:GetService("RunService")  -- Initialize RunService
+local localPlayer = game.Players.LocalPlayer
+
+local function getRoot(character)
+    return character:FindFirstChild("HumanoidRootPart")
+end
+
+local walkFlinging = false
+local flingPower = 500  -- No limit for flingPower
+
+-- Start the fling loop
+repeat
+    RunService.Heartbeat:Wait()  -- Wait for each frame
+    local character = localPlayer.Character
+    local root = getRoot(character)
+    local vel = nil
+
+    -- Check if the character and HumanoidRootPart exist
+    while not (character and character.Parent and root and root.Parent) do
+        RunService.Heartbeat:Wait()  -- Wait for a frame if the character doesn't exist yet
+        character = localPlayer.Character
+        root = getRoot(character)
+    end
+
+    vel = root.Velocity
+    -- Calculate the velocity with the fling power
+    root.Velocity = vel * flingPower + Vector3.new(flingPower, flingPower, flingPower)
+
+    -- Wait to apply the fling effect
+    RunService.RenderStepped:Wait()  -- RenderStepped waits for each frame render
+    if character and character.Parent and root and root.Parent then
+        root.Velocity = vel  -- Reset velocity to its original state
+    end
+
+    -- Wait for the next step and maintain the velocity
+    RunService.Stepped:Wait()  -- Use Stepped to synchronize actions with frames
+    if character and character.Parent and root and root.Parent then
+        root.Velocity = vel + Vector3.new(0, 0, 0)  -- Do not change velocity in the vertical direction
+    end
+until not walkFlinging  -- Stop when walkFlinging is false
+
